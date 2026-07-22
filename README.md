@@ -1,5 +1,9 @@
 # rag-ablations
 
+[![CI](https://github.com/muhzuhaib/rag-ablations/actions/workflows/ci.yml/badge.svg)](https://github.com/muhzuhaib/rag-ablations/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](pyproject.toml)
+
 **Most RAG projects claim they improved retrieval. Almost none say what they improved it over.**
 
 This is a retrieval benchmark that always states its baseline. Every design choice — chunking,
