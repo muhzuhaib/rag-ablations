@@ -1,0 +1,14 @@
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      RAG_DATASET: scifact
+      RAG_SYSTEM: bm25
+    volumes:
+      # Persist the downloaded corpus so a restart does not re-fetch it.
+      - corpora:/app/data
+
+volumes:
+  corpora:
