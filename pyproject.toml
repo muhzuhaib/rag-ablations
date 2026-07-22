@@ -1,0 +1,37 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "rag-ablations"
+version = "0.1.0"
+description = "Reproducible retrieval benchmark: measures RAG design choices against a stated BM25 baseline"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+authors = [{ name = "Muhammad Zuhaib Zahid" }]
+keywords = ["rag", "retrieval", "benchmark", "bm25", "information-retrieval"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+]
+dependencies = [
+    "numpy>=1.24",
+    "snowballstemmer>=2.2",
+    "certifi>=2024.2.2",
+]
+
+[project.optional-dependencies]
+# Dense retrieval pulls in torch. Kept optional so the BM25 baseline and the
+# metrics can be installed and run in seconds on any machine.
+dense = ["sentence-transformers>=3.0"]
+service = ["fastapi>=0.110", "uvicorn>=0.29"]
+dev = ["pytest>=8.0", "httpx>=0.27"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/rag_ablations"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
