@@ -1,0 +1,62 @@
+{
+  "dataset": "scifact",
+  "split": "test",
+  "systems": "all",
+  "documents": 5183,
+  "queries": 300,
+  "generated_at": "2026-07-22T02:55:27+00:00",
+  "environment": {
+    "python": "3.14.4",
+    "platform": "Windows-11-10.0.26200-SP0"
+  },
+  "results": [
+    {
+      "system": "BM25 (stemmed)",
+      "notes": "Lucene defaults k1=1.2 b=0.75, Porter stemming, stopwords removed",
+      "ndcg@10": 0.6861854628538808,
+      "recall@100": 0.9208888888888889,
+      "index_seconds": 1.33,
+      "ms_per_query": 0.75
+    },
+    {
+      "system": "BM25 (no stemming)",
+      "notes": "Same parameters, raw tokens",
+      "ndcg@10": 0.666285235509998,
+      "recall@100": 0.8858888888888888,
+      "index_seconds": 0.44,
+      "ms_per_query": 0.45
+    },
+    {
+      "system": "Dense (MiniLM-L6)",
+      "notes": "all-MiniLM-L6-v2, 384-dim, cosine over the full matrix",
+      "ndcg@10": 0.6450816521455776,
+      "recall@100": 0.925,
+      "index_seconds": 309.42,
+      "ms_per_query": 18.13
+    },
+    {
+      "system": "Hybrid (BM25 + dense, RRF)",
+      "notes": "Reciprocal rank fusion, rrf_k=60, untuned",
+      "ndcg@10": 0.7152687859314688,
+      "recall@100": 0.955,
+      "index_seconds": 0.93,
+      "ms_per_query": 35.68
+    },
+    {
+      "system": "BM25 + cross-encoder rerank",
+      "notes": "ms-marco-MiniLM-L-6-v2 over the top 100",
+      "ndcg@10": 0.687475458735912,
+      "recall@100": 0.9208888888888889,
+      "index_seconds": 1.14,
+      "ms_per_query": 7932.72
+    },
+    {
+      "system": "Hybrid + cross-encoder rerank",
+      "notes": "Same reranker over the fused top 100",
+      "ndcg@10": 0.6874032654090521,
+      "recall@100": 0.955,
+      "index_seconds": 0.73,
+      "ms_per_query": 7670.63
+    }
+  ]
+}
