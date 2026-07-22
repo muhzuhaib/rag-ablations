@@ -1,9 +1,10 @@
 {
   "dataset": "scifact",
   "split": "test",
+  "systems": "sparse",
   "documents": 5183,
   "queries": 300,
-  "generated_at": "2026-07-22T01:22:40+00:00",
+  "generated_at": "2026-07-22T01:36:53+00:00",
   "environment": {
     "python": "3.14.4",
     "platform": "Windows-11-10.0.26200-SP0"
@@ -14,16 +15,16 @@
       "notes": "Lucene defaults k1=1.2 b=0.75, Porter stemming, stopwords removed",
       "ndcg@10": 0.6861854628538808,
       "recall@100": 0.9208888888888889,
-      "index_seconds": 2.43,
-      "ms_per_query": 1.38
+      "index_seconds": 3.6,
+      "ms_per_query": 2.34
     },
     {
       "system": "BM25 (no stemming)",
       "notes": "Same parameters, raw tokens",
       "ndcg@10": 0.666285235509998,
       "recall@100": 0.8858888888888888,
-      "index_seconds": 0.87,
-      "ms_per_query": 1.06
+      "index_seconds": 1.18,
+      "ms_per_query": 1.52
     }
   ]
 }

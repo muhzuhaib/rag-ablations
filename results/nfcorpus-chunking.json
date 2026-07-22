@@ -1,0 +1,46 @@
+{
+  "dataset": "nfcorpus",
+  "split": "test",
+  "systems": "chunking",
+  "documents": 3633,
+  "queries": 323,
+  "generated_at": "2026-07-22T01:38:43+00:00",
+  "environment": {
+    "python": "3.14.4",
+    "platform": "Windows-11-10.0.26200-SP0"
+  },
+  "results": [
+    {
+      "system": "BM25 + whole document",
+      "notes": "Control condition \u2014 no chunking",
+      "ndcg@10": 0.32233393069821903,
+      "recall@100": 0.2464156578967403,
+      "index_seconds": 2.56,
+      "ms_per_query": 0.86
+    },
+    {
+      "system": "BM25 + 128-word windows (32 overlap)",
+      "notes": "The size most tutorials default to",
+      "ndcg@10": 0.3164169576984929,
+      "recall@100": 0.24130746161107236,
+      "index_seconds": 1.59,
+      "ms_per_query": 0.92
+    },
+    {
+      "system": "BM25 + 64-word windows (16 overlap)",
+      "notes": "Smaller windows, more precise but more diluted idf",
+      "ndcg@10": 0.3076196855974222,
+      "recall@100": 0.2415365722396726,
+      "index_seconds": 1.53,
+      "ms_per_query": 1.15
+    },
+    {
+      "system": "BM25 + 3-sentence windows (stride 2)",
+      "notes": "Sentence-aligned rather than word-count aligned",
+      "ndcg@10": 0.30845865643138637,
+      "recall@100": 0.2428793315073385,
+      "index_seconds": 1.75,
+      "ms_per_query": 1.29
+    }
+  ]
+}

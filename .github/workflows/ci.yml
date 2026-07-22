@@ -24,7 +24,30 @@ jobs:
           cache: pip
 
       - name: Install
-        run: pip install -e ".[dev]"
+        run: pip install -e ".[dev,service]"
 
       - name: Test
         run: pytest -q
+
+  reproduce:
+    # The unit tests assert properties; they would not notice a refactor that
+    # quietly changed the analyzer or the idf formula. This job re-runs the
+    # baseline over 300 real queries and fails if the published nDCG moves,
+    # which is what keeps the README honest.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+
+      - name: Install
+        run: pip install -e .
+
+      - name: Reproduce the published SciFact baseline
+        run: python -m rag_ablations.benchmark --dataset scifact --systems sparse --check
+
+      - name: Reproduce the published chunking ablation
+        run: python -m rag_ablations.benchmark --dataset scifact --systems chunking --check

@@ -1,9 +1,10 @@
 {
   "dataset": "nfcorpus",
   "split": "test",
+  "systems": "sparse",
   "documents": 3633,
   "queries": 323,
-  "generated_at": "2026-07-22T01:23:04+00:00",
+  "generated_at": "2026-07-22T01:38:33+00:00",
   "environment": {
     "python": "3.14.4",
     "platform": "Windows-11-10.0.26200-SP0"
@@ -14,16 +15,16 @@
       "notes": "Lucene defaults k1=1.2 b=0.75, Porter stemming, stopwords removed",
       "ndcg@10": 0.32191771538522246,
       "recall@100": 0.24642570976437728,
-      "index_seconds": 2.75,
-      "ms_per_query": 0.53
+      "index_seconds": 2.6,
+      "ms_per_query": 0.38
     },
     {
       "system": "BM25 (no stemming)",
       "notes": "Same parameters, raw tokens",
       "ndcg@10": 0.3071989717273006,
       "recall@100": 0.23494447678335004,
-      "index_seconds": 0.82,
-      "ms_per_query": 0.4
+      "index_seconds": 0.91,
+      "ms_per_query": 0.42
     }
   ]
 }
