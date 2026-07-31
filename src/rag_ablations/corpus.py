@@ -1,6 +1,6 @@
 """BEIR corpus loading.
 
-Only the stdlib is used to fetch and parse datasets — no `datasets`, no
+Only the stdlib is used to fetch and parse datasets: no `datasets`, no
 `beir`. Those pull a large dependency tree for what is, in the end, three
 files of JSONL and TSV, and every extra dependency is another way for a
 reviewer's `pip install` to fail.
@@ -20,6 +20,8 @@ from pathlib import Path
 
 import certifi
 
+from . import paths
+
 BEIR_URL = "https://public.ukp.informatik.tu-darmstadt.de/thakur/BEIR/datasets/{name}.zip"
 
 # Deliberately small corpora. Both fit in memory and embed on a CPU in minutes,
@@ -29,7 +31,9 @@ DATASETS = {
     "nfcorpus": "Medical information retrieval. 3.6k docs, 323 test queries.",
 }
 
-DATA_DIR = Path(__file__).resolve().parents[2] / "data"
+def _default_data_dir() -> Path:
+    """Resolved per call, not at import, so a test or CI can move it."""
+    return paths.data_dir()
 
 
 @dataclass(frozen=True)
@@ -40,7 +44,7 @@ class Document:
 
     @property
     def content(self) -> str:
-        """Title and body joined — BEIR's own baselines index both."""
+        """Title and body joined, because BEIR's own baselines index both."""
         return f"{self.title}\n\n{self.text}".strip()
 
 
@@ -63,7 +67,7 @@ def download(name: str, data_dir: Path | None = None) -> Path:
     if name not in DATASETS:
         raise ValueError(f"Unknown dataset {name!r}. Known: {sorted(DATASETS)}")
 
-    root = data_dir or DATA_DIR
+    root = data_dir or _default_data_dir()
     target = root / name
     if target.exists():
         return target

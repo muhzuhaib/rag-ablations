@@ -21,12 +21,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Callable
 
-from . import chunking, corpus
+from . import chunking, corpus, paths
 from .metrics import evaluate
 from .chunking import Chunked
 from .retrievers import BM25, RRF, Dense, Reranked
 
-RESULTS_DIR = Path(__file__).resolve().parents[2] / "results"
 TOP_K = 100
 
 
@@ -99,7 +98,7 @@ def chunking_systems() -> list[System]:
         System(
             name="BM25 + whole document",
             build=lambda: Chunked(BM25(), chunking.whole_document, name="whole"),
-            notes="Control condition — no chunking",
+            notes="Control condition, no chunking",
         ),
         System(
             name="BM25 + 128-word windows (32 overlap)",
@@ -181,7 +180,7 @@ def check_against(path: Path, results: list[Result], tolerance: float) -> int:
 
     This is what stops the README from drifting away from the code. A refactor
     that quietly changes the analyzer or the idf formula still passes the unit
-    tests — they assert properties, not corpus-level scores — but it will move
+    tests, which assert properties rather than corpus-level scores, but it will move
     nDCG on 300 real queries, and this catches that.
 
     Timings are deliberately not checked: they vary with the runner.
@@ -263,7 +262,7 @@ def main(argv: list[str] | None = None) -> int:
     print()
     print(to_markdown(results))
 
-    out = args.out or RESULTS_DIR / f"{args.dataset}-{args.systems}.json"
+    out = args.out or paths.results_dir() / f"{args.dataset}-{args.systems}.json"
 
     if args.check:
         return check_against(out, results, args.tolerance)

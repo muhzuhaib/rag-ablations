@@ -19,9 +19,9 @@ from pathlib import Path
 
 import numpy as np
 
-CACHE_DIR = Path(__file__).resolve().parents[3] / "data" / "embeddings"
+from .. import paths
 
-# Small, fast, and the community default for CPU retrieval — 384 dimensions and
+# Small, fast, and the community default for CPU retrieval: 384 dimensions and
 # a 256-token window. That window is short enough that it forces the chunking
 # question rather than hiding it, which is a benchmark variable here.
 DEFAULT_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
@@ -68,7 +68,7 @@ class Dense:
         """Key the cache on the model and the exact corpus contents.
 
         Hashing the text rather than the dataset name means a change to
-        chunking invalidates the cache automatically — a stale embedding matrix
+        chunking invalidates the cache automatically. A stale embedding matrix
         silently scoring a different corpus would corrupt every result in the
         table.
         """
@@ -76,7 +76,7 @@ class Dense:
         for text in texts:
             digest.update(text.encode("utf-8", "replace"))
             digest.update(b"\0")
-        return CACHE_DIR / f"{digest.hexdigest()[:16]}.npy"
+        return paths.embeddings_dir() / f"{digest.hexdigest()[:16]}.npy"
 
     def index(self, doc_ids: list[str], texts: list[str]) -> "Dense":
         self.doc_ids = list(doc_ids)
