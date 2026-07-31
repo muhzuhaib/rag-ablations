@@ -39,7 +39,7 @@ def test_rrf_indexes_every_child():
 
 
 def test_rrf_promotes_the_document_both_systems_agree_on():
-    # "shared" is 2nd for one system and 3rd for the other, never 1st — but it
+    # "shared" is 2nd for one system and 3rd for the other, never 1st, but it
     # is the only document both rank, which is exactly what RRF rewards.
     a = StubRetriever(["a1", "shared", "a2"])
     b = StubRetriever(["b1", "b2", "shared"])

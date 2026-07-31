@@ -2,7 +2,7 @@
 
 Deliberately thin. The interesting claims in this project are in the results
 table, and a service is only worth including if it runs *the same code* that
-was measured — otherwise the benchmark describes something the API does not do.
+was measured. Otherwise the benchmark describes something the API does not do.
 So the retriever here is built by the same factory the benchmark uses, and the
 configuration it ran under is exposed at `/health`.
 
@@ -10,7 +10,7 @@ configuration it ran under is exposed at `/health`.
 
 Environment:
     RAG_DATASET   corpus to index at startup (default: scifact)
-    RAG_SYSTEM    "bm25" (default) or "hybrid" — hybrid needs the dense extra
+    RAG_SYSTEM    "bm25" (default) or "hybrid"; hybrid needs the dense extra
 """
 
 from __future__ import annotations

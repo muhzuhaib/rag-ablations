@@ -6,9 +6,9 @@ Chunking is the RAG design choice most often decided by copying a tutorial's
 Measuring it needs care. Chunking changes the *unit of retrieval*, but the
 relevance judgments are written against whole documents, so scoring chunks
 directly would compare against the wrong ground truth. `Chunked` therefore
-retrieves chunks and pools them back to document level with a max — a document
-is as relevant as its best passage — which is both the standard approach and
-the one that keeps every row in the table scored against the same qrels.
+retrieves chunks and pools them back to document level with a max, on the rule
+that a document is as relevant as its best passage. That is both the standard
+approach and the one that keeps every row scored against the same qrels.
 """
 
 from __future__ import annotations
@@ -22,7 +22,7 @@ _SENTENCE = re.compile(r"(?<=[.!?])\s+")
 
 
 def whole_document(text: str) -> list[str]:
-    """No chunking — the control condition."""
+    """No chunking: the control condition."""
     return [text]
 
 

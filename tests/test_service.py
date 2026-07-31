@@ -1,7 +1,7 @@
 """Service tests against a stubbed corpus.
 
 The real corpus is a network download, so `corpus.load` is patched. What is
-being tested is the API contract — status codes, response shape, validation —
+being tested is the API contract (status codes, response shape, validation),
 not BM25, which has its own tests.
 """
 

@@ -31,7 +31,7 @@ def dcg(gains: Sequence[float]) -> float:
 def ndcg_at_k(qrels: Qrels, run: Run, k: int = 10) -> float:
     """Normalised DCG at k, averaged over queries that have judgments.
 
-    Queries with no relevant documents are skipped rather than scored 0 — they
+    Queries with no relevant documents are skipped rather than scored 0, since they
     carry no information and including them just scales every system down by
     the same constant.
     """

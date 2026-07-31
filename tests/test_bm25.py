@@ -1,6 +1,6 @@
 """BM25 behaviour tests.
 
-These pin the properties BM25 is supposed to have — not the exact float it
+These pin the properties BM25 is supposed to have, not the exact float it
 returns, which would just freeze in whatever the implementation does today.
 """
 
@@ -51,7 +51,7 @@ def test_rare_terms_outweigh_common_ones(index):
 
 def test_term_frequency_saturates():
     # d2 mentions "dogs" twice, d3 once. Two occurrences must score higher, but
-    # not twice as high — that saturation is the whole point of k1.
+    # not twice as high; that saturation is the whole point of k1.
     index = BM25().index(["d2", "d3"], [CORPUS["d2"], CORPUS["d3"]])
     scores = dict(index.search("dogs"))
     assert scores["d2"] > scores["d3"]

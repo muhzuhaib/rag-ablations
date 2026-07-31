@@ -1,4 +1,4 @@
-"""Okapi BM25 — the baseline every other row in the results table is measured against.
+"""Okapi BM25, the baseline every other row in the results table is measured against.
 
 BM25 is not a straw man. It still beats a lot of dense retrievers on
 out-of-domain corpora, which is exactly why it is the baseline here: a dense
@@ -24,7 +24,7 @@ class BM25:
 
     Parameters follow the standard Okapi formulation:
 
-    * ``k1`` controls term-frequency saturation — how quickly repeated
+    * ``k1`` controls term-frequency saturation: how quickly repeated
       occurrences of a term stop adding score. 1.2 is the Lucene default.
     * ``b`` controls length normalisation, from 0 (ignore document length) to
       1 (fully normalise). 0.75 is the Lucene default.

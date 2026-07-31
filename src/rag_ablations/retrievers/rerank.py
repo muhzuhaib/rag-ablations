@@ -3,7 +3,7 @@
 A bi-encoder embeds the query and the document separately, so it never sees
 them together and cannot model term interaction. A cross-encoder scores the
 pair jointly, which is far more accurate and far too slow to run over a whole
-corpus — hence the two-stage shape: retrieve cheaply, rerank the top of the
+corpus, hence the two-stage shape: retrieve cheaply, rerank the top of the
 list expensively.
 
 The consequence is stated in the results table rather than left implicit: a
@@ -51,7 +51,7 @@ class Reranked:
         return self
 
     def search(self, query: str, k: int = 100) -> list[tuple[str, float]]:
-        # Always pull `depth` candidates even when k is smaller — reranking a
+        # Always pull `depth` candidates even when k is smaller. Reranking a
         # deeper list is the entire benefit, and truncating to k first would
         # measure nothing but the first stage.
         candidates = self.first_stage.search(query, k=max(self.depth, k))[: self.depth]

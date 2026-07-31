@@ -7,7 +7,7 @@ RRF combines rankings using only rank position:
 Score-based fusion is the obvious alternative and it is the wrong one here.
 BM25 scores are unbounded sums of idf terms while cosine similarities sit in
 [-1, 1], so blending them requires normalising two distributions whose shape
-changes per query — a tuning knob that quietly becomes a per-dataset fit. RRF
+changes per query, a tuning knob that quietly becomes a per-dataset fit. RRF
 ignores magnitudes entirely, has one constant, and is what the TREC literature
 uses. Choosing the method with fewer degrees of freedom is what keeps the
 comparison honest.
