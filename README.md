@@ -104,16 +104,20 @@ latency here for no gain.
 ## Run it
 
 ```bash
-pip install -e ".[dev]"
+pip install rag-ablations
 
-python -m rag_ablations.benchmark --dataset scifact --systems sparse     # baseline, no downloads
+python -m rag_ablations.benchmark --dataset scifact --systems sparse     # baseline, no model downloads
 python -m rag_ablations.benchmark --dataset scifact --systems chunking   # chunking ablation
 python -m rag_ablations.benchmark --dataset scifact --systems all        # adds dense + reranking
 ```
 
-The corpus downloads itself on first use (2.8 MB) and is cached in `data/`. No keys, no accounts.
-`--systems all` needs the dense extra (`pip install -e ".[dense,dev]"`) and downloads two small
+The corpus downloads itself on first use (2.8 MB) and is cached in `data/`, alongside the
+`results/` the run writes, both under whichever directory you run from. No keys, no accounts.
+`--systems all` needs the dense extra (`pip install "rag-ablations[dense]"`) and downloads two small
 models from HuggingFace.
+
+To work on it rather than run it, clone and `pip install -e ".[dev]"`. In a checkout the same two
+directories sit next to `src/`, so `--check` compares against the committed results.
 
 Add `--check` to any command to verify the stored results still reproduce instead of overwriting
 them. That is what CI runs.
