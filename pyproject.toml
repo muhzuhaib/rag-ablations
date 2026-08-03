@@ -28,6 +28,9 @@ dependencies = [
 dense = ["sentence-transformers>=3.0"]
 service = ["fastapi>=0.110", "uvicorn>=0.29"]
 dev = ["pytest>=8.0", "httpx>=0.27"]
+# Only docs/record_demo.py needs Pillow, and only when the GIF is re-recorded.
+# Kept out of dev so CI does not install an image library to run the tests.
+demo = ["pillow>=10.0"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/rag_ablations"]
