@@ -6,7 +6,7 @@ FROM python:3.12-slim
 WORKDIR /app
 
 # Copy metadata first so the dependency layer is cached independently of source
-# changes — editing a retriever should not reinstall numpy.
+# changes: editing a retriever should not reinstall numpy.
 COPY pyproject.toml README.md LICENSE ./
 COPY src ./src
 

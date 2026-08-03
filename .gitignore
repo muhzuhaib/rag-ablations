@@ -6,5 +6,8 @@ dist/
 build/
 .pytest_cache/
 
-# Downloaded corpora — fetched on first run, never committed
+# Downloaded corpora: fetched on first run, never committed
 data/
+
+# Where docs/record_demo.py runs its recorded session by default
+.demo-run/
