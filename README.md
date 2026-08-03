@@ -14,6 +14,18 @@ It runs on a laptop CPU in minutes, with no API keys and nothing to pay for, so 
 can reproduce the table rather than take it on trust. CI re-runs the benchmark on every push and
 fails if a number moves, so the README cannot quietly drift away from the code.
 
+![An empty directory to the published baseline numbers: pip install rag-ablations, then one
+benchmark command printing nDCG@10 0.6862 and Recall@100 0.9209 for stemmed
+BM25](https://raw.githubusercontent.com/muhzuhaib/rag-ablations/main/docs/demo.gif)
+
+That is a real session rather than a mock-up, recorded by
+[`docs/record_demo.py`](docs/record_demo.py): a fresh virtual environment, an install from PyPI, and
+the first two rows of the table below regenerated from the corpus, about a minute in total from an
+empty directory. Idle pauses are shortened to keep it watchable; the lines and the numbers are
+exactly what the two commands printed, and
+[`docs/demo-transcript.json`](docs/demo-transcript.json) holds every one of them with the second it
+appeared at.
+
 ## Is the baseline itself correct?
 
 That question decides whether anything else here means anything, so it is checked against published
