@@ -1,0 +1,42 @@
+# The published figures are re-checked on every push, but a push only happens
+# when someone is already working. The thing worth catching is the opposite
+# case: a month where nobody touched the repo and the benchmark quietly stopped
+# reproducing anyway, because a dependency moved underneath it. So the same gate
+# also runs on a schedule, against whatever the current versions resolve to.
+#
+# It deliberately does not pin the dependency versions. Pinning would make this
+# job pass for ever and prove nothing; the whole point is to find out when the
+# ecosystem has moved.
+#
+# Note that GitHub disables scheduled workflows in a repository with no activity
+# for 60 days, and emails the owner when it does.
+name: Reproducibility
+
+on:
+  schedule:
+    # 06:00 UTC on the first of each month.
+    - cron: "0 6 1 * *"
+  workflow_dispatch:
+
+jobs:
+  reproduce:
+    name: the published figures still reproduce
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+
+      - name: Install, resolving dependencies fresh
+        run: pip install -e .
+
+      - name: Record what it actually resolved to
+        run: pip freeze
+
+      - name: The SciFact baseline still matches the published nDCG
+        run: python -m rag_ablations.benchmark --dataset scifact --systems sparse --check
+
+      - name: The chunking ablation still matches
+        run: python -m rag_ablations.benchmark --dataset scifact --systems chunking --check
