@@ -229,6 +229,16 @@ not chase AIA links for missing intermediate certificates, so the stdlib default
   would put two model downloads and a 40-minute cross-encoder run on every push. The rows that CI
   cannot re-verify are the rows whose numbers you should trust least.
 
+## Contributing
+
+Issues, questions and pull requests are welcome. [CONTRIBUTING.md](CONTRIBUTING.md) says what a good
+one looks like here, and the short version is that any new result has to be measured against the
+same corpus and queries as everything already in the table, with its results file committed so the
+gate can hold it there. [CHANGELOG.md](CHANGELOG.md) records what changed in each release, including
+any figure that moved, and [SECURITY.md](SECURITY.md) covers how to report a vulnerability
+privately. Anything that is not yet a bug report or a concrete request belongs in
+[Discussions](https://github.com/muhzuhaib/rag-ablations/discussions).
+
 ## License
 
 MIT
