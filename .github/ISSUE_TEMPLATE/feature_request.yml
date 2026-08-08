@@ -1,0 +1,39 @@
+name: Feature request
+description: Suggest a retrieval method, a dataset, or a change to how results are reported.
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The point of this project is that every result is measured against a stated baseline, and
+        that the baseline itself is validated against published figures. A suggestion that fits that
+        shape is much easier to act on than one that does not.
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What you would like added
+      description: A retrieval method, a corpus, an ablation, or a change to how the table reports.
+    validations:
+      required: true
+
+  - type: textarea
+    id: comparison
+    attributes:
+      label: What it would be measured against, and how
+      description: >-
+        Which corpus and which queries, so the result lands in the same table as everything else. If
+        you already have numbers, please include them and say how you got them.
+    validations:
+      required: true
+
+  - type: textarea
+    id: cost
+    attributes:
+      label: What it costs to run
+      description: >-
+        Roughly, in time and in hardware. A method that needs a paid API or a GPU can still be worth
+        adding, but it changes whether the benchmark stays reproducible by anyone on a laptop, which
+        is a property this project is trying to keep.
+    validations:
+      required: false

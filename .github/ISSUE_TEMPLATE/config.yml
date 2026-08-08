@@ -1,0 +1,10 @@
+blank_issues_enabled: false
+
+contact_links:
+  - name: Question, or a result you want to discuss
+    url: https://github.com/muhzuhaib/rag-ablations/discussions
+    about: Anything that is not yet a bug report or a concrete request.
+
+  - name: Security vulnerability
+    url: https://github.com/muhzuhaib/rag-ablations/security/advisories/new
+    about: Report privately. Please do not open a public issue for these.

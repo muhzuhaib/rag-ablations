@@ -1,0 +1,64 @@
+name: Bug report
+description: Something is broken, or a published number does not reproduce.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        If a figure in the README does not reproduce on your machine, that is the most serious
+        report this project can get. Please include the number you got as well as the number you
+        expected.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What you saw, including the traceback or the output if there is any.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected instead
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: The exact command you ran
+      description: >-
+        The full command line, and the dataset and systems it used. If this is a number that will not
+        reproduce, please paste both figures.
+      render: shell
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: The release from PyPI, or the commit if you are running from a checkout.
+    validations:
+      required: true
+
+  - type: input
+    id: python
+    attributes:
+      label: Python version and operating system
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: install-shape
+    attributes:
+      label: How it was installed
+      description: >-
+        This matters more than it looks. A path resolved by walking up from the package file behaves
+        differently in a checkout than in an installed wheel, and that difference has hidden a real
+        defect here before.
+      options:
+        - label: Installed from PyPI
+        - label: Installed from a checkout with `pip install -e .`
+        - label: Run from the source tree without installing
