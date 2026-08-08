@@ -1,0 +1,28 @@
+version: 2
+
+updates:
+  # Actions pin themselves to a major tag, which keeps moving under us until a
+  # major is deprecated and CI starts warning. A monthly check catches that
+  # without a pull request every week.
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: "Update"
+    groups:
+      actions:
+        patterns: ["*"]
+
+  # Retrieval dependencies are the ones that can move a published number, so
+  # they arrive one at a time and get read properly. Test tooling is grouped,
+  # because a pytest bump cannot change an nDCG.
+  - package-ecosystem: pip
+    directory: "/"
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: "Update"
+    groups:
+      dev-dependencies:
+        dependency-type: development
