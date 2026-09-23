@@ -54,11 +54,12 @@ class Reranked:
         # Always pull `depth` candidates even when k is smaller. Reranking a
         # deeper list is the entire benefit, and truncating to k first would
         # measure nothing but the first stage.
-        candidates = self.first_stage.search(query, k=max(self.depth, k))[: self.depth]
+        candidates = self.first_stage.search(query, k=max(self.depth, k))
         if not candidates:
             return []
 
-        doc_ids = [doc_id for doc_id, _ in candidates]
+        head, rest = candidates[: self.depth], candidates[self.depth :]
+        doc_ids = [doc_id for doc_id, _ in head]
         scores = self._load_model().predict(
             [(query, self._texts.get(doc_id, "")) for doc_id in doc_ids],
             batch_size=self.batch_size,
@@ -70,5 +71,5 @@ class Reranked:
         # Anything below the rerank depth keeps its first-stage order and sits
         # underneath. Dropping it would damage recall@k for k > depth and make
         # the recall column incomparable across rows.
-        tail = [(doc_id, 0.0) for doc_id, _ in candidates[self.depth :]]
+        tail = [(doc_id, 0.0) for doc_id, _ in rest]
         return (reranked + tail)[:k]

@@ -112,6 +112,16 @@ def test_reranked_search_respects_k(reranked):
     assert len(reranked.search("q", k=1)) == 1
 
 
+def test_k_beyond_depth_still_returns_the_first_stage_tail(monkeypatch):
+    # The rerank depth is a compute budget, not a result cap: documents below
+    # it keep their first-stage order, so recall@k stays comparable for k > depth.
+    first = StubRetriever(["a", "b", "c", "d"])
+    stage = Reranked(first, depth=2)
+    monkeypatch.setattr(stage, "_load_model", lambda: StubCrossEncoder())
+    stage.index(["a", "b", "c", "d"], ["no", "no", "no", "no"])
+    assert [doc for doc, _ in stage.search("q", k=4)] == ["a", "b", "c", "d"]
+
+
 def test_empty_first_stage_returns_nothing(monkeypatch):
     stage = Reranked(StubRetriever([]), depth=10)
     monkeypatch.setattr(stage, "_load_model", lambda: StubCrossEncoder())

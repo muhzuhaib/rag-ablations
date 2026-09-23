@@ -22,6 +22,14 @@ when nothing in the API changed. A benchmark whose numbers drift quietly is wort
 - A monthly scheduled CI run of the reproducibility gate, so a benchmark that has stopped
   reproducing is noticed without waiting for someone to push.
 
+### Fixed
+
+- `Reranked.search` returned at most `depth` results even when asked for `k > depth`: the
+  candidate list was cut to the rerank depth before the tail slice ran, so the first-stage tail
+  the code documents was unreachable. Documents below the rerank depth now keep their
+  first-stage order underneath the reranked head, which is what keeps recall@k comparable
+  across rows. The benchmark asks for `k` equal to `depth`, so no published figure moves.
+
 ## [0.1.0] - 2026-07-31
 
 First release, [on PyPI](https://pypi.org/project/rag-ablations/). The ablation table and the
