@@ -74,3 +74,11 @@ def test_length_normalisation_prefers_the_shorter_document():
 
 def test_empty_query_returns_nothing(index):
     assert index.search("") == []
+
+
+def test_reindexing_replaces_the_previous_corpus(index):
+    # A retriever is reused across ablation runs, so a second index() call must
+    # forget the first corpus entirely rather than merge postings into it.
+    index.index(["n1", "n2"], ["plate tectonics", "tectonic plates drift"])
+    assert index.search("cat") == []
+    assert {doc_id for doc_id, _ in index.search("tectonics")} == {"n1", "n2"}

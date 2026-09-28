@@ -44,6 +44,8 @@ class BM25:
 
     def index(self, doc_ids: list[str], texts: list[str]) -> "BM25":
         self.doc_ids = list(doc_ids)
+        # Built fresh on every call, so re-indexing replaces the corpus.
+        self._postings = defaultdict(list)
         lengths = []
         doc_freq: Counter[str] = Counter()
 
