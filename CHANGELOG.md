@@ -29,6 +29,10 @@ when nothing in the API changed. A benchmark whose numbers drift quietly is wort
   the code documents was unreachable. Documents below the rerank depth now keep their
   first-stage order underneath the reranked head, which is what keeps recall@k comparable
   across rows. The benchmark asks for `k` equal to `depth`, so no published figure moves.
+- `BM25.index` called a second time kept the postings of the previous corpus while replacing
+  its document ids and statistics, so a search for an old term raised `KeyError` or pointed at a
+  document from the new corpus. Each call now builds its index from scratch. The benchmark
+  indexes each corpus once, so no published figure moves.
 
 ## [0.1.0] - 2026-07-31
 
