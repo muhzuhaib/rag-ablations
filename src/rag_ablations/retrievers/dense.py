@@ -15,6 +15,8 @@ job is to isolate the effect of the *model*.
 from __future__ import annotations
 
 import hashlib
+import os
+import tempfile
 from pathlib import Path
 
 import numpy as np
@@ -82,16 +84,49 @@ class Dense:
         self.doc_ids = list(doc_ids)
 
         path = self._cache_path(texts)
-        if self.cache and path.exists():
-            self._matrix = np.load(path)
-            return self
+        if self.cache:
+            cached = self._load_cached(path, len(self.doc_ids))
+            if cached is not None:
+                self._matrix = cached
+                return self
 
         self._matrix = self._encode(list(texts))
 
         if self.cache:
-            path.parent.mkdir(parents=True, exist_ok=True)
-            np.save(path, self._matrix)
+            self._save_cached(path, self._matrix)
         return self
+
+    @staticmethod
+    def _load_cached(path: Path, rows: int) -> np.ndarray | None:
+        """The cached matrix, or None if it is missing or unusable.
+
+        A file that cannot be read, or whose row count does not match the
+        corpus, is treated as a miss and re-encoded rather than trusted: a
+        truncated file would otherwise fail every later run, and a matrix of
+        the wrong height would pair vectors with the wrong documents.
+        """
+        if not path.exists():
+            return None
+        try:
+            matrix = np.load(path, allow_pickle=False)
+        except (OSError, ValueError, EOFError):
+            return None
+        if matrix.ndim != 2 or matrix.shape[0] != rows:
+            return None
+        return matrix
+
+    @staticmethod
+    def _save_cached(path: Path, matrix: np.ndarray) -> None:
+        """Write to a temporary file and rename, so a reader never sees half a file."""
+        path.parent.mkdir(parents=True, exist_ok=True)
+        fd, tmp = tempfile.mkstemp(dir=path.parent, prefix=f".{path.stem}.", suffix=".tmp")
+        try:
+            with os.fdopen(fd, "wb") as fh:
+                np.save(fh, matrix)
+            os.replace(tmp, path)
+        except BaseException:
+            Path(tmp).unlink(missing_ok=True)
+            raise
 
     def search(self, query: str, k: int = 100) -> list[tuple[str, float]]:
         if not self.doc_ids:
