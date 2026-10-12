@@ -45,6 +45,8 @@ when nothing in the API changed. A benchmark whose numbers drift quietly is wort
 
 ### Security
 
+- Downloaded BEIR archives are now checked against a pinned SHA-256 before anything is unpacked.
+  A mismatch discards the download and raises `ChecksumError`.
 - The CI and reproducibility workflows now request a read-only `GITHUB_TOKEN` instead of
   inheriting the repository default.
 - The container now runs as an unprivileged user rather than root. A `corpora` volume created by

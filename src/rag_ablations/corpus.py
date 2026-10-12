@@ -10,6 +10,7 @@ Datasets are cached under `data/` and never re-downloaded.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import shutil
 import ssl
@@ -30,6 +31,18 @@ DATASETS = {
     "scifact": "Scientific claim verification. 5k abstracts, 300 test claims.",
     "nfcorpus": "Medical information retrieval. 3.6k docs, 323 test queries.",
 }
+
+# SHA-256 of each published archive. A download that does not match is
+# rejected before anything is unpacked, so a corrupted transfer or a changed
+# file on the mirror cannot silently become the corpus every figure rests on.
+SHA256 = {
+    "scifact": "536e14446a0ba56ed1398ab1055f39fe852686ecad24a6306c80c490fa8e0165",
+    "nfcorpus": "efe5be03f8c5b86a5870102d0599d227c8c6e2484328e68c6522560385671b0b",
+}
+
+
+class ChecksumError(RuntimeError):
+    """A downloaded archive did not match its published SHA-256."""
 
 def _default_data_dir() -> Path:
     """Resolved per call, not at import, so a test or CI can move it."""
@@ -81,10 +94,20 @@ def download(name: str, data_dir: Path | None = None) -> Path:
     # certifi's bundle makes the download behave the same on every platform.
     context = ssl.create_default_context(cafile=certifi.where())
 
+    digest = hashlib.sha256()
     with urllib.request.urlopen(
         BEIR_URL.format(name=name), context=context, timeout=60
     ) as response, archive.open("wb") as fh:
-        shutil.copyfileobj(response, fh)
+        for block in iter(lambda: response.read(1 << 20), b""):
+            digest.update(block)
+            fh.write(block)
+
+    if digest.hexdigest() != SHA256[name]:
+        archive.unlink()
+        raise ChecksumError(
+            f"{name}.zip has SHA-256 {digest.hexdigest()}, expected {SHA256[name]}. "
+            "The download was discarded; nothing was unpacked."
+        )
 
     # Extract to a temporary directory first so an interrupted run cannot leave
     # a half-populated dataset that the `target.exists()` check would then
