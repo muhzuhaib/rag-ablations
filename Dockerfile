@@ -12,6 +12,14 @@ COPY src ./src
 
 RUN pip install --no-cache-dir ".[service]"
 
+# Run as an unprivileged user. The data directory is created and handed to that
+# user here, so a fresh named volume mounted over it inherits the ownership and
+# the corpus can still be downloaded on first start.
+RUN useradd --system --uid 10001 --home-dir /app --shell /usr/sbin/nologin app \
+    && mkdir -p /app/data \
+    && chown app:app /app/data
+USER app
+
 ENV RAG_DATASET=scifact \
     RAG_SYSTEM=bm25
 
