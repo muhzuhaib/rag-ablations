@@ -33,6 +33,23 @@ when nothing in the API changed. A benchmark whose numbers drift quietly is wort
   its document ids and statistics, so a search for an old term raised `KeyError` or pointed at a
   document from the new corpus. Each call now builds its index from scratch. The benchmark
   indexes each corpus once, so no published figure moves.
+- The dense embedding cache was written in place, so an interrupted run could leave a truncated
+  `.npy` file that made every later run fail on load. It was also trusted without checking its
+  height, which would pair vectors with the wrong documents. The cache is now written to a
+  temporary file and renamed, and a file that cannot be read or does not match the corpus is
+  re-encoded. No published figure moves.
+- `Reranked.search` scored the first-stage tail `0.0`, which sits above the negative logits a
+  cross-encoder usually returns, so a caller pooling or sorting by score would lift tail documents
+  over the reranked head. The tail is now scored strictly below the lowest reranked score. The
+  benchmark asks for `k` equal to `depth`, so there is no tail and no published figure moves.
+
+### Security
+
+- The CI and reproducibility workflows now request a read-only `GITHUB_TOKEN` instead of
+  inheriting the repository default.
+- The container now runs as an unprivileged user rather than root. A `corpora` volume created by
+  an earlier image is owned by root; remove it (`docker compose down -v`) if the service cannot
+  write to `/app/data`.
 
 ## [0.1.0] - 2026-07-31
 
