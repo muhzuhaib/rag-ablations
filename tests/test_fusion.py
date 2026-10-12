@@ -127,3 +127,24 @@ def test_empty_first_stage_returns_nothing(monkeypatch):
     monkeypatch.setattr(stage, "_load_model", lambda: StubCrossEncoder())
     stage.index([], [])
     assert stage.search("q") == []
+
+
+class NegativeCrossEncoder:
+    """Logit-style scores, all below zero, as a real cross-encoder often gives."""
+
+    def predict(self, pairs, **kwargs):
+        return [-1.0 if "GOOD" in text else -5.0 for _, text in pairs]
+
+
+def test_tail_scores_stay_below_the_reranked_head(monkeypatch):
+    # A caller that sorts or pools by score (Chunked takes a max) must see the
+    # same order the list has. Scoring the tail 0.0 put it above negative logits.
+    first = StubRetriever(["a", "b", "c", "d"])
+    stage = Reranked(first, depth=2)
+    monkeypatch.setattr(stage, "_load_model", lambda: NegativeCrossEncoder())
+    stage.index(["a", "b", "c", "d"], ["no", "GOOD", "no", "no"])
+    results = stage.search("q", k=4)
+    assert [doc for doc, _ in results] == ["b", "a", "c", "d"]
+    scores = [score for _, score in results]
+    assert scores == sorted(scores, reverse=True)
+    assert len(set(scores)) == len(scores)

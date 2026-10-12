@@ -70,6 +70,10 @@ class Reranked:
 
         # Anything below the rerank depth keeps its first-stage order and sits
         # underneath. Dropping it would damage recall@k for k > depth and make
-        # the recall column incomparable across rows.
-        tail = [(doc_id, 0.0) for doc_id, _ in rest]
+        # the recall column incomparable across rows. Cross-encoder scores are
+        # logits and are often negative, so the tail is scored strictly below
+        # the lowest reranked score: a caller that sorts or pools by score
+        # must not lift a tail document above the reranked head.
+        floor = reranked[-1][1] if reranked else 0.0
+        tail = [(doc_id, floor - 1.0 - i) for i, (doc_id, _) in enumerate(rest)]
         return (reranked + tail)[:k]
