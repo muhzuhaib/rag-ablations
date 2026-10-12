@@ -18,6 +18,11 @@ on:
     - cron: "0 6 1 * *"
   workflow_dispatch:
 
+# Nothing here writes to the repository, so the token gets read access only.
+# Without this it inherits the repository default, which can be read and write.
+permissions:
+  contents: read
+
 jobs:
   reproduce:
     name: the published figures still reproduce
