@@ -181,7 +181,9 @@ def check_against(path: Path, results: list[Result], tolerance: float) -> int:
     This is what stops the README from drifting away from the code. A refactor
     that quietly changes the analyzer or the idf formula still passes the unit
     tests, which assert properties rather than corpus-level scores, but it will move
-    nDCG on 300 real queries, and this catches that.
+    nDCG@10 or Recall@100 on 300 real queries, and this catches that.
+
+    Recall@100 is skipped for older stored rows that do not include it.
 
     Timings are deliberately not checked: they vary with the runner.
     """
@@ -197,12 +199,15 @@ def check_against(path: Path, results: list[Result], tolerance: float) -> int:
         if expected is None:
             failures.append(f"{result.system}: not present in {path.name}")
             continue
-        drift = abs(expected["ndcg@10"] - result.metrics["ndcg@10"])
-        if drift > tolerance:
-            failures.append(
-                f"{result.system}: nDCG@10 {result.metrics['ndcg@10']:.4f} "
-                f"vs stored {expected['ndcg@10']:.4f} (drift {drift:.4f})"
-            )
+        for metric, label in (("ndcg@10", "nDCG@10"), ("recall@100", "Recall@100")):
+            if metric == "recall@100" and metric not in expected:
+                continue
+            drift = abs(expected[metric] - result.metrics[metric])
+            if drift > tolerance:
+                failures.append(
+                    f"{result.system}: {label} {result.metrics[metric]:.4f} "
+                    f"vs stored {expected[metric]:.4f} (drift {drift:.4f})"
+                )
 
     if failures:
         print("\nResults no longer reproduce:")
@@ -236,7 +241,7 @@ def main(argv: list[str] | None = None) -> int:
         "--tolerance",
         type=float,
         default=1e-4,
-        help="allowed absolute nDCG@10 difference under --check",
+        help="allowed absolute nDCG@10 and Recall@100 difference under --check",
     )
     args = parser.parse_args(argv)
 

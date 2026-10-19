@@ -24,6 +24,9 @@ when nothing in the API changed. A benchmark whose numbers drift quietly is wort
 
 ### Fixed
 
+- `--check` compared only nDCG@10 against the stored results, so a change that moved Recall@100
+  from 0.9 to 0.1 still passed the reproducibility gate. Both metrics are now checked with the same
+  tolerance; stored rows from older results files without Recall@100 are checked on nDCG@10 alone.
 - `Reranked.search` returned at most `depth` results even when asked for `k > depth`: the
   candidate list was cut to the rerank depth before the tail slice ran, so the first-stage tail
   the code documents was unreachable. Documents below the rerank depth now keep their
