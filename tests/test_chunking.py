@@ -32,6 +32,32 @@ def test_overlap_must_be_smaller_than_the_window():
         fixed_window(size=10, overlap=10)
 
 
+def test_negative_overlap_is_rejected():
+    with pytest.raises(ValueError):
+        fixed_window(size=5, overlap=-3)
+
+
+def test_window_size_must_be_positive():
+    with pytest.raises(ValueError):
+        fixed_window(size=0, overlap=-1)
+
+
+def test_sentence_stride_must_not_exceed_the_chunk_size():
+    # A stride of 3 over chunks of 2 skips every third sentence.
+    with pytest.raises(ValueError):
+        sentences(per_chunk=2, stride=3)
+
+
+def test_sentence_chunk_size_must_be_positive():
+    with pytest.raises(ValueError):
+        sentences(per_chunk=0, stride=1)
+
+
+def test_sentence_stride_must_be_positive():
+    with pytest.raises(ValueError):
+        sentences(per_chunk=2, stride=0)
+
+
 def test_sentence_chunker_respects_boundaries():
     text = "One. Two. Three. Four. Five."
     chunks = sentences(per_chunk=2, stride=2)(text)

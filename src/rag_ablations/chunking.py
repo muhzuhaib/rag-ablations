@@ -32,6 +32,10 @@ def fixed_window(size: int = 128, overlap: int = 32) -> Chunker:
     Overlap exists to stop a passage that straddles a boundary from being split
     across two chunks and diluted in both. It costs index size proportionally.
     """
+    if size < 1:
+        raise ValueError("size must be at least 1 word")
+    if overlap < 0:
+        raise ValueError("overlap must not be negative, or words between windows are skipped")
     if overlap >= size:
         raise ValueError("overlap must be smaller than size, or the window never advances")
 
@@ -52,6 +56,12 @@ def sentences(per_chunk: int = 3, stride: int = 2) -> Chunker:
     more for a bi-encoder than for BM25: a truncated clause changes the
     embedding, while bag-of-words scoring barely notices.
     """
+    if per_chunk < 1:
+        raise ValueError("per_chunk must be at least 1 sentence")
+    if stride < 1:
+        raise ValueError("stride must be at least 1 sentence, or the window never advances")
+    if stride > per_chunk:
+        raise ValueError("stride must not exceed per_chunk, or sentences between windows are skipped")
 
     def chunk(text: str) -> list[str]:
         parts = [s for s in _SENTENCE.split(text) if s.strip()]
