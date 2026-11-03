@@ -27,6 +27,18 @@ from .chunking import Chunked
 from .retrievers import BM25, RRF, Dense, Reranked
 
 TOP_K = 100
+DEFAULT_SPLIT = "test"
+
+
+def results_filename(dataset: str, systems: str, split: str = DEFAULT_SPLIT) -> str:
+    """Name of the results file for a run.
+
+    The default split keeps the plain name the committed results already use;
+    any other split gets its own file, so a run on it cannot overwrite them.
+    """
+    if split == DEFAULT_SPLIT:
+        return f"{dataset}-{systems}.json"
+    return f"{dataset}-{systems}-{split}.json"
 
 
 @dataclass(frozen=True)
@@ -175,7 +187,9 @@ def to_markdown(results: list[Result]) -> str:
     return "\n".join(lines)
 
 
-def check_against(path: Path, results: list[Result], tolerance: float) -> int:
+def check_against(
+    path: Path, results: list[Result], tolerance: float, split: str | None = None
+) -> int:
     """Fail if a fresh run no longer reproduces the committed results.
 
     This is what stops the README from drifting away from the code. A refactor
@@ -183,7 +197,9 @@ def check_against(path: Path, results: list[Result], tolerance: float) -> int:
     tests, which assert properties rather than corpus-level scores, but it will move
     nDCG@10 or Recall@100 on 300 real queries, and this catches that.
 
-    Recall@100 is skipped for older stored rows that do not include it.
+    Recall@100 is skipped for older stored rows that do not include it. When
+    `split` is given, the stored results must have been produced on that split;
+    a file that does not record its split is not held to it.
 
     Timings are deliberately not checked: they vary with the runner.
     """
@@ -191,7 +207,17 @@ def check_against(path: Path, results: list[Result], tolerance: float) -> int:
         print(f"No stored results at {path} to check against.")
         return 1
 
-    stored = {row["system"]: row for row in json.loads(path.read_text())["results"]}
+    document = json.loads(path.read_text())
+    stored_split = document.get("split")
+    if split is not None and stored_split is not None and stored_split != split:
+        print()
+        print(
+            f"{path.name} was produced on a different split: requested split "
+            f"{split!r} vs stored {stored_split!r}."
+        )
+        return 1
+
+    stored = {row["system"]: row for row in document["results"]}
     failures = []
 
     for result in results:
@@ -223,7 +249,7 @@ def check_against(path: Path, results: list[Result], tolerance: float) -> int:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--dataset", default="scifact", choices=sorted(corpus.DATASETS))
-    parser.add_argument("--split", default="test")
+    parser.add_argument("--split", default=DEFAULT_SPLIT)
     parser.add_argument(
         "--systems",
         default="all",
@@ -267,10 +293,12 @@ def main(argv: list[str] | None = None) -> int:
     print()
     print(to_markdown(results))
 
-    out = args.out or paths.results_dir() / f"{args.dataset}-{args.systems}.json"
+    out = args.out or paths.results_dir() / results_filename(
+        args.dataset, args.systems, args.split
+    )
 
     if args.check:
-        return check_against(out, results, args.tolerance)
+        return check_against(out, results, args.tolerance, split=args.split)
 
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(
